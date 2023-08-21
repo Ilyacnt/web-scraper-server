@@ -1,19 +1,21 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
+import { categoryService } from '../service/CategoryService'
 
 class CategoryController {
-  async getCategoryMinPrice(req: Request, res: Response): Promise<void | Error> {
+  async getCategoryMinPrice(req: Request, res: Response, next: NextFunction): Promise<void | Error> {
     try {
       const categoryId = req.query.categoryId
-      console.log(typeof categoryId)
-
       if (typeof categoryId === 'string') {
+        const response = await categoryService.getMinPriceByCategoryIdFromHoff(categoryId)
         res.send({
-          categoryId: categoryId,
+          minPrice: response,
         })
       } else {
-        throw new Error('Category id not correct')
+        throw new Error('Category id is not correct')
       }
-    } catch (error) {}
+    } catch (error) {
+      next(error)
+    }
   }
 }
 
