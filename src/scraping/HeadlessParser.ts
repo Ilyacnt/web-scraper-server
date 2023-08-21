@@ -1,4 +1,4 @@
-import puppeteer, { Browser } from 'puppeteer'
+import puppeteer, { Browser, Page } from 'puppeteer'
 
 class HeadlessParser {
   public browserInstance: Browser
@@ -27,6 +27,22 @@ class HeadlessParser {
     let page = await this.browserInstance.newPage()
     console.log(`Navigating to ${this.url}...`)
     await page.goto(this.url)
+
+    this.selectDataFromPage(page)
+  }
+
+  async selectDataFromPage(page: Page): Promise<void> {
+    console.log('TEST1 BEFORE WAITING SELECTOR')
+    await page.waitForSelector('.o-template-wrapper')
+    console.log('TEST2 AFTER WAITING SELECTOR')
+
+    let data = await page.$$eval(
+      '#\\30 > div > div > div > div.product-content > div.product-title > div.product-price > div > span',
+      (data) => {
+        return data
+      }
+    )
+    console.log(data)
   }
 
   async test(): Promise<void> {
