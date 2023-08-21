@@ -6,22 +6,22 @@ This is a server for receiving data and writing them to Google Spreadsheets.
 
 To install the dependencies, run the following command:
 
-npm install
+`npm install`
 
 ## Build
 
 To build the TypeScript code, run the following command:
 
-npm run build
+`npm run build`
 
 ## Start
 
 To start the server, run the following command:
 
-npm start
+`npm start`
 
 ## Development
 
 To run the server in development mode with automatic code reloading, run the following command:
 
-npm run dev
+`npm run dev`
