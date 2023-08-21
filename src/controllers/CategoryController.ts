@@ -5,8 +5,8 @@ class CategoryController {
   async getCategoryMinPrice(req: Request, res: Response, next: NextFunction): Promise<void | Error> {
     try {
       const categoryId = req.query.categoryId
-      if (typeof categoryId === 'string') {
-        const response = await categoryService.getMinPriceByCategoryIdFromHoff(categoryId)
+      if (typeof categoryId === 'string' || typeof categoryId === 'number') {
+        const response = await categoryService.getMinPriceByCategoryIdFromHoff(categoryId?.toString())
         res.send({
           minPrice: response,
         })
