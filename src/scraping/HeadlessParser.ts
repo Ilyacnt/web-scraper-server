@@ -10,7 +10,6 @@ type DataFromPage = 'price' | 'discount'
 
 class HeadlessParser {
     public browserInstance: Browser
-    // public url: string = 'https://hoff.ru/catalog/gostinaya/divany/?sort=price_asc'
     public url: string = process.env.HOFF_URL || 'https://hoff.ru/'
 
     constructor() {
@@ -21,7 +20,8 @@ class HeadlessParser {
         category: string,
         sortBy: CategorySortBy
     ): Promise<Record<string, string>> {
-        return await this.openHoffPageByCategory(category, sortBy)
+        let response = await this.openHoffPageByCategory(category, sortBy)
+        return response
     }
 
     private async openHoffPageByCategory(
@@ -42,7 +42,7 @@ class HeadlessParser {
         try {
             console.log('Opening the browser......')
             let browser: Browser = await puppeteer.launch({
-                headless: false,
+                headless: Boolean(process.env.BROWSER_HEADLESS_MODE) || true,
                 args: ['--disable-setuid-sandbox'],
                 ignoreHTTPSErrors: true,
             })
@@ -71,9 +71,6 @@ class HeadlessParser {
                 return { maxDiscount: elements[0].textContent }
             })
         }
-
-        console.log(result)
-
         return result
     }
 }
