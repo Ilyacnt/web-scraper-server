@@ -46,7 +46,7 @@ class HeadlessParser {
         try {
             console.log('Opening the browser......')
             let browser: Browser = await puppeteer.launch({
-                headless: Boolean(process.env.BROWSER_HEADLESS_MODE) || true,
+                headless: 'new',
                 args: ['--disable-setuid-sandbox'],
                 ignoreHTTPSErrors: true,
             })
@@ -75,6 +75,7 @@ class HeadlessParser {
                 return { maxDiscount: elements[0].textContent }
             })
         }
+        page.close()
         return result
     }
 }

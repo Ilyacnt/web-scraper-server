@@ -11,7 +11,7 @@ app.use('/category', categoryRouter)
 app.use(errorMiddleware)
 
 app.get('/', (req: Request, res: Response) => {
-    res.send('Hello World')
+    res.send('Server is running')
 })
 
 app.listen(process.env.PORT || 80, () => {
