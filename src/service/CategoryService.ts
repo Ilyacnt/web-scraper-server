@@ -1,7 +1,14 @@
+import { CategorySortBy, headlessParser } from '../scraping/HeadlessParser'
+
 class CategoryService {
-  async getMinPriceByCategoryIdFromHoff(categoryId: string): Promise<number> {
-    return 1337
-  }
+    async getMinPriceByCategoryFromHoff(category: string): Promise<Record<string, string>> {
+        try {
+            const result = headlessParser.parseMinPrice(category, CategorySortBy.PRICE_ASC)
+            return result
+        } catch (error) {
+            throw new Error('Error when parsing site')
+        }
+    }
 }
 
 export const categoryService = new CategoryService()
