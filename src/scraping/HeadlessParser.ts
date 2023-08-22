@@ -30,6 +30,10 @@ class HeadlessParser {
     ): Promise<Record<string, string>> {
         let currentUrl = this.url + `catalog/${category}/?sort=${sortBy}`
 
+        if (!this.browserInstance) {
+            await this.createBrowser()
+        }
+
         let page = await this.browserInstance.newPage()
         console.log(`Navigating to ${currentUrl}...`)
         await page.goto(currentUrl)
