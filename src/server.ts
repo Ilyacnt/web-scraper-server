@@ -3,7 +3,7 @@ import path from 'path'
 import dotenv from 'dotenv'
 import { categoryRouter } from './routes/categoryRouter'
 import { errorMiddleware } from './middlewares/errorHandler'
-dotenv.config({ path: path.resolve(__dirname, '../config/.env') })
+dotenv.config({ path: path.resolve(__dirname, '..', 'config', '.env') })
 
 const app: Express = express()
 
@@ -11,9 +11,9 @@ app.use('/category', categoryRouter)
 app.use(errorMiddleware)
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('Hello World')
+    res.send('Hello World')
 })
 
 app.listen(process.env.SERVER_PORT, () => {
-  console.log(`Running on http://localhost:${process.env.SERVER_PORT}`)
+    console.log(`Running on http://localhost:${process.env.SERVER_PORT}`)
 })

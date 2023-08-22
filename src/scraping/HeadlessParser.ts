@@ -1,53 +1,49 @@
 import puppeteer, { Browser, Page } from 'puppeteer'
 
 class HeadlessParser {
-  public browserInstance: Browser
-  public url: string = 'https://hoff.ru/catalog/gostinaya/divany/?sort=price_asc'
+    public browserInstance: Browser
+    public url: string = 'https://hoff.ru/catalog/gostinaya/divany/?sort=price_asc'
 
-  constructor() {
-    this.createBrowser()
-  }
-
-  async createBrowser(): Promise<void> {
-    try {
-      console.log('Opening the browser......')
-      let browser: Browser = await puppeteer.launch({
-        headless: false,
-        args: ['--disable-setuid-sandbox'],
-        ignoreHTTPSErrors: true,
-      })
-
-      this.browserInstance = browser
-    } catch (err) {
-      console.log('Could not create a browser instance => : ', err)
+    constructor() {
+        this.createBrowser()
     }
-  }
 
-  async openHoffPage(): Promise<void> {
-    let page = await this.browserInstance.newPage()
-    console.log(`Navigating to ${this.url}...`)
-    await page.goto(this.url)
+    private async createBrowser(): Promise<void> {
+        try {
+            console.log('Opening the browser......')
+            let browser: Browser = await puppeteer.launch({
+                headless: false,
+                args: ['--disable-setuid-sandbox'],
+                ignoreHTTPSErrors: true,
+            })
 
-    this.selectDataFromPage(page)
-  }
+            this.browserInstance = browser
+        } catch (err) {
+            console.log('Could not create a browser instance => : ', err)
+        }
+    }
 
-  async selectDataFromPage(page: Page): Promise<void> {
-    console.log('TEST1 BEFORE WAITING SELECTOR')
-    await page.waitForSelector('.o-template-wrapper')
-    console.log('TEST2 AFTER WAITING SELECTOR')
+    private async openHoffPage(): Promise<void> {
+        let page = await this.browserInstance.newPage()
+        console.log(`Navigating to ${this.url}...`)
+        await page.goto(this.url)
 
-    let data = await page.$$eval(
-      '#\\30 > div > div > div > div.product-content > div.product-title > div.product-price > div > span',
-      (data) => {
-        return data
-      }
-    )
-    console.log(data)
-  }
+        await this.selectDataFromPage(page)
+    }
 
-  async test(): Promise<void> {
-    this.openHoffPage()
-  }
+    private async selectDataFromPage(page: Page): Promise<void> {
+        await page.waitForSelector('.current-price')
+
+        let result = await page.$$eval('.current-price', (elements) => {
+            return elements[0].textContent
+        })
+
+        console.log(result)
+    }
+
+    async test(): Promise<void> {
+        await this.openHoffPage()
+    }
 }
 
 export const headlessParser = new HeadlessParser()
