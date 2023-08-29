@@ -47,12 +47,7 @@ class HeadlessParser {
             console.log('Opening the browser......')
             let browser: Browser = await puppeteer.launch({
                 headless: 'new',
-                args: [
-                    '--no-sandbox',
-                    '--disable-setuid-sandbox',
-                    '--single-process',
-                    '--no-zygote',
-                ],
+                args: ['--no-sandbox', '--disable-setuid-sandbox'],
                 ignoreHTTPSErrors: true,
                 executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || puppeteer.executablePath(),
             })
