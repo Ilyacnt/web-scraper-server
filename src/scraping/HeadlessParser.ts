@@ -8,18 +8,21 @@ export const enum CategorySortBy {
 
 type DataFromPage = 'price' | 'discount'
 
+type ParsedCategory = {
+    categoryName: string
+    categoryMinPrice: string
+    categoryMaxDiscount: string
+}
+
 class HeadlessParser {
     public browserInstance: Browser
-    public url: string = process.env.HOFF_URL || 'https://hoff.ru/'
+    public url: string = process.env.HOFF_URL || 'https://hoff.ru'
 
     constructor() {
         this.createBrowser()
     }
 
-    public async parseMinPrice(
-        category: string,
-        sortBy: CategorySortBy
-    ): Promise<Record<string, string>> {
+    public async parseMinPrice(category: string, sortBy: CategorySortBy): Promise<ParsedCategory> {
         let response = await this.openHoffPageByCategory(category, sortBy)
         return response
     }
@@ -27,8 +30,8 @@ class HeadlessParser {
     private async openHoffPageByCategory(
         category: string,
         sortBy: CategorySortBy
-    ): Promise<Record<string, string>> {
-        let currentUrl = this.url + `catalog/${category}/?sort=${sortBy}`
+    ): Promise<ParsedCategory> {
+        let currentUrl = this.url + `${category}?sort=${sortBy}`
 
         if (!this.browserInstance) {
             await this.createBrowser()
@@ -58,24 +61,33 @@ class HeadlessParser {
         }
     }
 
-    private async selectDataFromPage(
-        page: Page,
-        dataType: DataFromPage = 'price'
-    ): Promise<Record<string, string>> {
-        let result = {}
-        if (dataType === 'price') {
-            await page.waitForSelector('.current-price')
-
-            result = await page.$$eval('.current-price', (elements) => {
-                return { minPrice: elements[0].textContent }
-            })
-        } else if (dataType === 'discount') {
-            await page.waitForSelector('.promo-label__text')
-
-            result = await page.$$eval('.promo-label__text', (elements) => {
-                return { maxDiscount: elements[0].textContent }
-            })
+    private async selectDataFromPage(page: Page): Promise<ParsedCategory> {
+        let result: ParsedCategory = {
+            categoryName: '',
+            categoryMinPrice: '',
+            categoryMaxDiscount: '',
         }
+
+        console.log(result)
+
+        await page.waitForSelector('.page-title')
+
+        await page.$$eval('.page-title', (elements) => {
+            result.categoryName = elements[0].textContent || ''
+        })
+
+        await page.waitForSelector('.current-price')
+
+        await page.$$eval('.current-price', (elements) => {
+            result.categoryMinPrice = elements[0].textContent || ''
+        })
+
+        await page.waitForSelector('.promo-label__text')
+
+        await page.$$eval('.promo-label__text', (elements) => {
+            result.categoryMaxDiscount = elements[0].textContent || ''
+        })
+
         page.close()
         return result
     }
